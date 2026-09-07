@@ -6,7 +6,7 @@ export async function productPrices(urls, extract = scrape) {
   if (!Array.isArray(urls) || urls.length < 1 || urls.length > 10)
     throw new Error('Choose 1–10 product URLs.');
   const rows = [];
-  for (const url of [...new Set(urls.map(publicUrl))]) {
+  for (const url of new Set(urls.map(publicUrl))) {
     try {
       const data = await extract(url, {
         formats: ['text'],
