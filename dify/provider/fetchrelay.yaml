@@ -1,0 +1,26 @@
+identity:
+  author: skrcode
+  name: fetchrelay
+  label:
+    en_US: FetchRelay
+  description:
+    en_US: Extract public webpages into clean Markdown for AI workflows.
+  icon: icon.png
+  tags:
+    - utilities
+credentials_for_provider:
+  api_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: FetchRelay API key
+    help:
+      en_US: Create a FetchRelay API key. Enter it without the Bearer prefix. Successful work uses your FetchRelay credits.
+    url: https://fetchrelay.com/integrations/mcp?utm_source=dify&utm_medium=integration&utm_campaign=dify-launch
+tools:
+  - tools/scrape.yaml
+  - tools/crawl.yaml
+  - tools/crawl_status.yaml
+extra:
+  python:
+    source: provider/fetchrelay.py

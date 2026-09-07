@@ -1,0 +1,12 @@
+{
+  "actorSpecification": 1,
+  "name": "fetchrelay-website-to-markdown",
+  "title": "Website to Markdown by FetchRelay",
+  "description": "Extract up to 10 public webpages into a Markdown dataset with your FetchRelay API key.",
+  "version": "1.0",
+  "dockerfile": "../Dockerfile",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  }
+}

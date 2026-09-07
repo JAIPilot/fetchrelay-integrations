@@ -1,0 +1,22 @@
+identity:
+  name: crawl
+  author: skrcode
+  label:
+    en_US: Crawl
+description:
+  human:
+    en_US: Start an asynchronous crawl of up to ten pages. Returns a job ID; poll crawl_status without starting another crawl.
+  llm: Start an asynchronous crawl of up to ten pages. Returns a job ID; poll crawl_status without starting another crawl.
+parameters:
+  - name: url
+    type: string
+    required: true
+    label:
+      en_US: Starting public website URL
+    human_description:
+      en_US: Starting public website URL
+    llm_description: Starting public website URL
+    form: llm
+extra:
+  python:
+    source: tools/crawl.py

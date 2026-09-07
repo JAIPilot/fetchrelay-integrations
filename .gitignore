@@ -1,0 +1,10 @@
+node_modules/
+.env*
+!.env.example
+__pycache__/
+*.pyc
+*.difypkg
+storage/
+.mcpregistry_*
+*.pem
+.venv/

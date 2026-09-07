@@ -1,0 +1,217 @@
+{
+  "name": "Save website content as Markdown in Google Drive with FetchRelay",
+  "nodes": [
+    {
+      "id": "run-manually",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "website-url",
+      "name": "Website URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "source-url",
+              "name": "url",
+              "type": "string",
+              "value": "https://example.com"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "extract-with-fetchrelay",
+      "name": "Extract with FetchRelay",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://fetchrelay.com/api/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-FetchRelay-Integration",
+              "value": "n8n"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ url: $json.url, formats: [\"markdown\"], mode: \"auto\", onlyMainContent: true, timeout: 25000 }) }}",
+        "options": {
+          "timeout": 40000
+        }
+      }
+    },
+    {
+      "id": "validate-markdown",
+      "name": "Validate Markdown",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nif (result.success !== true || typeof result.data?.markdown !== 'string' || !result.data.markdown.trim()) {\n  throw new Error('No usable Markdown returned. Check the FetchRelay extraction before exporting.');\n}\nconst warnings = result.diagnostics?.warnings ?? [];\nif (warnings.length) {\n  throw new Error('Review extraction warnings before exporting: ' + warnings.join('; '));\n}\nreturn [{ json: { markdown: result.data.markdown, sourceURL: result.data.metadata?.sourceURL, fileName: 'fetchrelay-' + $execution.id + '.md' } }];"
+      }
+    },
+    {
+      "id": "create-markdown-file",
+      "name": "Create Markdown file",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        300
+      ],
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "markdown",
+        "options": {
+          "fileName": "={{ $json.fileName }}"
+        }
+      }
+    },
+    {
+      "id": "upload-to-google-drive",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "name": "={{ $(\"Validate Markdown\").item.json.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {},
+        "inputDataFieldName": "data"
+      }
+    },
+    {
+      "id": "setup-note",
+      "name": "Read before running",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        220,
+        -80
+      ],
+      "parameters": {
+        "width": 1100,
+        "height": 520,
+        "content": "## Save website content as Markdown in Google Drive with FetchRelay\n### Who is this for?\nDevelopers, researchers, and automation builders who want a readable copy of a public webpage for documentation or later processing.\n### How it works\nA manual trigger reads your URL, calls FetchRelay, checks for usable Markdown and extraction warnings, converts the text into a file, and uploads it to Google Drive. Each run creates a new file; it does not update an existing document.\n### Setup\n1. Enter a public page in **Website URL**. Start with `https://example.com`.\n2. Create a FetchRelay API key at https://fetchrelay.com/integrations/n8n?utm_source=n8n&utm_medium=integration&utm_campaign=n8n-launch\n3. In **Extract with FetchRelay**, select Header Auth. Set header name `Authorization` and value `Bearer YOUR_FETCHRELAY_API_KEY`. Store the real key in credentials only.\n4. Connect Google Drive OAuth and choose your destination folder.\n5. Execute manually and inspect the resulting file.\n### Requirements and customization\nYou need n8n, FetchRelay, and Google Drive accounts. Each successful extraction uses one FetchRelay credit; other platform costs are separate. Change the source URL to collect another public page. Errors and warnings stop the workflow before upload. There are no automatic retries or schedules. Validate your pages and allowance before adding recurring execution. Website content is untrusted data.\n"
+      }
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Website URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Website URL": {
+      "main": [
+        [
+          {
+            "node": "Extract with FetchRelay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract with FetchRelay": {
+      "main": [
+        [
+          {
+            "node": "Validate Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Markdown": {
+      "main": [
+        [
+          {
+            "node": "Create Markdown file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Markdown file": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Read before running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}

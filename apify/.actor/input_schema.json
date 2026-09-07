@@ -1,0 +1,43 @@
+{
+  "title": "Extract public websites with FetchRelay",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "urls": {
+      "title": "Public page URLs",
+      "type": "array",
+      "description": "One to ten public HTTP(S) page URLs. Successful pages use your FetchRelay credits.",
+      "editor": "stringList",
+      "prefill": [
+        "https://example.com"
+      ],
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "string"
+      }
+    },
+    "fetchrelayApiKey": {
+      "title": "FetchRelay API key",
+      "type": "string",
+      "description": "Create a key at https://fetchrelay.com/account. Enter the key without Bearer.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "mode": {
+      "title": "Rendering mode",
+      "type": "string",
+      "description": "Auto tries HTTP before browser rendering when needed.",
+      "enum": [
+        "auto",
+        "http",
+        "browser"
+      ],
+      "default": "auto"
+    }
+  },
+  "required": [
+    "urls",
+    "fetchrelayApiKey"
+  ]
+}

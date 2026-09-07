@@ -1,0 +1,22 @@
+identity:
+  name: crawl_status
+  author: skrcode
+  label:
+    en_US: Crawl Status
+description:
+  human:
+    en_US: Read crawl status and partial results by job ID. Terminal jobs may contain failed pages.
+  llm: Read crawl status and partial results by job ID. Terminal jobs may contain failed pages.
+parameters:
+  - name: job_id
+    type: string
+    required: true
+    label:
+      en_US: Job ID returned by crawl
+    human_description:
+      en_US: Job ID returned by crawl
+    llm_description: Job ID returned by crawl
+    form: llm
+extra:
+  python:
+    source: tools/crawl_status.py

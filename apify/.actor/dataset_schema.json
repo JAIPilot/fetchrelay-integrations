@@ -1,0 +1,43 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Extracted pages",
+      "transformation": {
+        "fields": [
+          "url",
+          "success",
+          "markdown",
+          "warnings",
+          "error"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "url": {
+            "label": "URL",
+            "format": "link"
+          },
+          "success": {
+            "label": "Success",
+            "format": "boolean"
+          },
+          "markdown": {
+            "label": "Markdown",
+            "format": "text"
+          },
+          "warnings": {
+            "label": "Warnings",
+            "format": "array"
+          },
+          "error": {
+            "label": "Error",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}
