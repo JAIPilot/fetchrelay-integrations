@@ -21,3 +21,11 @@ Blocked pages, invalid credentials, exhausted allowance, and connection failures
 Use Python 3.12. Install `requirements.txt`, then use the official Dify CLI: `dify plugin package .`. Remote debugging requires a Dify workspace debug key. No debug key or API key is included in this repository.
 
 See [PRIVACY.md](PRIVACY.md) for data handling.
+
+Source: https://github.com/skrcode/fetchrelay-integrations/tree/main/dify
+
+## Validation status
+
+The package, SDK schema loading, credential validation, and a live Example Domain scrape have been verified. Unit tests cover credential and tool error handling. Installation and workflow execution in Dify Cloud and self-hosted Dify have not yet been verified.
+
+Support: open an issue at https://github.com/skrcode/fetchrelay-integrations/issues.

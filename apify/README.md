@@ -8,7 +8,7 @@ Extract 1–10 public webpages into an Apify dataset using your own FetchRelay A
 - `fetchrelayApiKey`: your key, without `Bearer`. The input is marked secret.
 - `mode`: `auto` (default), `http`, or `browser`.
 
-Create a key at [FetchRelay](https://fetchrelay.com/integrations/n8n?utm_source=apify&utm_medium=integration&utm_campaign=apify-launch). Start with `https://example.com`.
+Create a key at [FetchRelay](https://fetchrelay.com/account?utm_source=apify&utm_medium=integration&utm_campaign=apify-launch). Start with `https://example.com`.
 
 ## Output
 
