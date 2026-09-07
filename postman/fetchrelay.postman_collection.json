@@ -1,0 +1,221 @@
+{
+  "info": {
+    "_postman_id": "0d62d602-2128-49f3-94b0-5c92bf7f1837",
+    "name": "FetchRelay — Scrape and Crawl Quickstart",
+    "description": "Official FetchRelay starter collection. Create a key at https://fetchrelay.com/account. Set fetchrelay_api_key in a PRIVATE environment and leave shared values empty. Send requests individually. Request 2 creates a new job; request 3 only checks it. Successful extraction consumes FetchRelay credits. Response examples are illustrative, not a complete API schema. Full reference: https://fetchrelay.com/docs/api. Source: https://github.com/JAIPilot/fetchrelay-integrations/tree/main/postman. No Google Drive connection, schedules or outbound messages.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{fetchrelay_api_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "crawl_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Extract a public page as Markdown",
+      "protocolProfileBehavior": {
+        "followRedirects": false
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const key = pm.environment.get('fetchrelay_api_key');",
+              "if (!key || !/^fr_[A-Za-z0-9]+$/.test(key)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error('Set fetchrelay_api_key in a private environment; never share its value.');",
+              "}",
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Successful HTTP response', () => pm.expect(pm.response.code).to.be.oneOf([200, 202]));",
+              "const result = pm.response.json();",
+              "pm.test('API reports success', () => pm.expect(result.success).to.eql(true));",
+              "pm.test('Nonempty Markdown', () => pm.expect(result.data.markdown.trim().length).to.be.greaterThan(0));",
+              "pm.test('No extraction warnings', () => pm.expect(result.diagnostics?.warnings || []).to.have.lengthOf(0));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://fetchrelay.com/api/scrape",
+        "description": "One page. Successful extraction uses account credits. Inspect diagnostics.warnings and compare output with the source.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://example.com\",\n  \"formats\": [\n    \"markdown\"\n  ],\n  \"mode\": \"http\",\n  \"onlyMainContent\": true,\n  \"timeout\": 25000\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "Illustrative successful Markdown response",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "https://fetchrelay.com/api/scrape",
+            "description": "One page. Successful extraction uses account credits. Inspect diagnostics.warnings and compare output with the source.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"formats\": [\n    \"markdown\"\n  ],\n  \"mode\": \"http\",\n  \"onlyMainContent\": true,\n  \"timeout\": 25000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"markdown\": \"# Example Domain\",\n    \"metadata\": {\n      \"title\": \"Example Domain\",\n      \"sourceURL\": \"https://example.com/\"\n    }\n  },\n  \"diagnostics\": {\n    \"warnings\": []\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. Start a one-page asynchronous crawl",
+      "protocolProfileBehavior": {
+        "followRedirects": false
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const key = pm.environment.get('fetchrelay_api_key');",
+              "if (!key || !/^fr_[A-Za-z0-9]+$/.test(key)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error('Set fetchrelay_api_key in a private environment; never share its value.');",
+              "}",
+              "pm.collectionVariables.unset('crawl_id');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Successful HTTP response', () => pm.expect(pm.response.code).to.be.oneOf([200, 202]));",
+              "const result = pm.response.json();",
+              "pm.test('API reports success', () => pm.expect(result.success).to.eql(true));",
+              "pm.test('Job ID returned', () => pm.expect(result.data.id).to.match(/^[a-f\\d]{8}-[a-f\\d]{4}-[1-5][a-f\\d]{3}-[89ab][a-f\\d]{3}-[a-f\\d]{12}$/i));",
+              "if (result.success === true && /^[a-f\\d]{8}-[a-f\\d]{4}-[1-5][a-f\\d]{3}-[89ab][a-f\\d]{3}-[a-f\\d]{12}$/i.test(result.data?.id || '')) pm.collectionVariables.set('crawl_id', result.data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://fetchrelay.com/api/crawl",
+        "description": "Creates a NEW job and uses credits for successfully extracted pages. Start once, retain its ID, then use request 3. This fixture is bounded to one page and depth zero.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://example.com\",\n  \"formats\": [\n    \"markdown\"\n  ],\n  \"mode\": \"http\",\n  \"onlyMainContent\": true,\n  \"timeout\": 25000,\n  \"async\": true,\n  \"limit\": 1,\n  \"maxDepth\": 0,\n  \"sitemap\": \"skip\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Check the existing crawl job",
+      "protocolProfileBehavior": {
+        "followRedirects": false
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const key = pm.environment.get('fetchrelay_api_key');",
+              "if (!key || !/^fr_[A-Za-z0-9]+$/.test(key)) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error('Set fetchrelay_api_key in a private environment; never share its value.');",
+              "}",
+              "if (!/^[a-f\\d]{8}-[a-f\\d]{4}-[1-5][a-f\\d]{3}-[89ab][a-f\\d]{3}-[a-f\\d]{12}$/i.test(pm.collectionVariables.get('crawl_id') || '')) {",
+              "  pm.execution.skipRequest();",
+              "  throw new Error('Start a crawl once, or set crawl_id to an existing job UUID owned by your account.');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Successful HTTP response', () => pm.expect(pm.response.code).to.be.oneOf([200, 202]));",
+              "const result = pm.response.json();",
+              "pm.test('API reports success', () => pm.expect(result.success).to.eql(true));",
+              "pm.test('Matching job returned', () => pm.expect(result.data.id).to.eql(pm.collectionVariables.get('crawl_id')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://fetchrelay.com/api/crawl/{{crawl_id}}",
+        "description": "Checks the saved job without creating another crawl. Pending/partial/failed jobs are not completed extractions. Poll manually with a delay and inspect per-page outcomes. No automatic retries or loop are configured."
+      },
+      "response": []
+    }
+  ]
+}

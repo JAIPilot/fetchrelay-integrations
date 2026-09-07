@@ -6,6 +6,8 @@ Public webpages into Markdown and structured data for your workflows.
 
 - [n8n: website → Markdown → Google Drive](n8n/README.md)
 - [MCP: connect an agent](mcp/README.md)
+- [Agent skill: install FetchRelay instructions and helper](skills/README.md)
+- [Postman: import the scrape and crawl quickstart](postman/README.md)
 - [Apify: batch Markdown extraction with your API key](apify/README.md)
 - [Dify: scraping and bounded crawl tools](dify/README.md)
 
