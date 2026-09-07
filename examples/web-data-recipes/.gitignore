@@ -1,0 +1,6 @@
+.env*
+exports*/
+*.state.json
+*.state.json.lock
+*.tmp
+prices.json

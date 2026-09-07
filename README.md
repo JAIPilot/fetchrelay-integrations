@@ -2,6 +2,8 @@
 
 Public webpages into Markdown and structured data for your workflows.
 
+**Start with a runnable project:** [documentation export, product prices, and pricing-page tracker](examples/web-data-recipes/README.md).
+
 - [n8n: website → Markdown → Google Drive](n8n/README.md)
 - [MCP: connect an agent](mcp/README.md)
 - [Apify: batch Markdown extraction with your API key](apify/README.md)
