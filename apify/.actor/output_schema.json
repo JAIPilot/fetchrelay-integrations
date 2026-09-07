@@ -1,0 +1,12 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Extracted webpages",
+  "properties": {
+    "results": {
+      "type": "string",
+      "title": "Page results",
+      "description": "Markdown, metadata, warnings and per-page success or failure.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    }
+  }
+}

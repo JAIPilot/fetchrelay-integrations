@@ -26,4 +26,4 @@ meta:
     version: '3.12'
     entrypoint: main
 privacy: PRIVACY.md
-repo: https://github.com/skrcode/fetchrelay-integrations
+repo: https://github.com/JAIPilot/fetchrelay-integrations
